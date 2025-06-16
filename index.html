@@ -11,61 +11,104 @@
     <style>
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #111827; /* bg-gray-900 */
-            color: #d1d5db; /* text-gray-300 */
+            background-color: #111827; /* Tailwind: bg-gray-900 */
+            color: #d1d5db; /* Tailwind: text-gray-300 */
         }
+
+        .class-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem; /* Tailwind: gap-4 */
+            font-size: 1.5rem; /* Tailwind: text-2xl */
+            line-height: 2rem;
+            font-weight: 700; /* Tailwind: font-bold */
+            color: #818cf8; /* Tailwind: text-indigo-400 */
+            margin-top: 2rem; /* Tailwind: mt-8 */
+            margin-bottom: 1rem; /* Tailwind: mb-4 */
+            border-bottom: 2px solid #374151; /* Tailwind: border-b-2 border-gray-700 */
+            padding-bottom: 0.5rem; /* Tailwind: pb-2 */
+        }
+
+        .class-icon {
+            width: 2rem; /* Tailwind: w-8 */
+            height: 2rem; /* Tailwind: h-8 */
+        }
+
+        .operator-grid {
+            display: flex;
+            flex-wrap: nowrap; /* 確保不換行，強制橫向 */
+            gap: 1rem; /* Tailwind: gap-4 */
+            overflow-x: auto; /* 啟用水平滾動條 */
+            padding-bottom: 0.75rem; /* Tailwind: pb-3 (為滾動條留出空間) */
+        }
+
         .operator-card {
-            @apply relative flex-shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden shadow-lg cursor-pointer transition-transform duration-200;
+            position: relative;
+            flex-shrink: 0; /* 防止卡片在 flex 容器中被壓縮 */
+            width: 5rem; /* Tailwind: w-20 */
+            height: 5rem; /* Tailwind: h-20 */
+            border-radius: 0.5rem; /* Tailwind: rounded-lg */
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* Tailwind: shadow-lg */
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
         }
+
         .operator-card:hover {
             transform: scale(1.05);
             z-index: 10;
         }
+        
+        /* 響應式設計：在中等螢幕上放大卡片 */
+        @media (min-width: 768px) {
+            .operator-card {
+                width: 6rem; /* Tailwind: md:w-24 */
+                height: 6rem; /* Tailwind: md:h-24 */
+            }
+        }
+
         .operator-avatar {
-            @apply w-full h-full object-cover;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
+
         .potential-overlay {
-            @apply absolute bottom-0 right-0 px-2 py-0.5 bg-black bg-opacity-60 text-white font-bold text-sm rounded-tl-lg;
-            pointer-events: none; /* Allows click to go through to the card */
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            padding: 0.125rem 0.5rem; /* Tailwind: px-2 py-0.5 */
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            font-weight: 700; /* Tailwind: font-bold */
+            font-size: 0.875rem; /* Tailwind: text-sm */
+            line-height: 1.25rem;
+            border-top-left-radius: 0.5rem; /* Tailwind: rounded-tl-lg */
+            pointer-events: none;
         }
         
-        /* --- MODIFIED --- */
-        /* 當潛能為6時，字體變為金色 */
+        /* 潛能為6時的特殊樣式 */
         .is-max-potential .potential-overlay {
-            @apply bg-black bg-opacity-75 text-yellow-400 font-bold;
+            background-color: rgba(0, 0, 0, 0.75);
+            color: #facc15; /* Tailwind: text-yellow-400 (金色) */
+            font-weight: 700;
         }
 
-        .class-header {
-             @apply flex items-center gap-4 text-2xl font-bold text-indigo-400 mt-8 mb-4 border-b-2 border-gray-700 pb-2;
-        }
-        .class-icon {
-            @apply w-8 h-8;
-        }
-
-        /* --- MODIFIED --- */
-        /* 將網格改為水平滾動的 Flex 容器 */
-        .operator-grid {
-            @apply flex gap-4 overflow-x-auto pb-3; /* pb-3 為滾動條留出空間 */
-            flex-wrap: nowrap;
-        }
-        
-        /* --- ADDED --- */
         /* 美化 Webkit 瀏覽器 (Chrome, Safari) 的滾動條 */
         .operator-grid::-webkit-scrollbar {
             height: 8px;
         }
         .operator-grid::-webkit-scrollbar-track {
-            background: #1f2937; /* bg-gray-800 */
+            background: #1f2937; /* Tailwind: bg-gray-800 */
             border-radius: 4px;
         }
         .operator-grid::-webkit-scrollbar-thumb {
-            background: #4f46e5; /* bg-indigo-600 */
+            background: #4f46e5; /* Tailwind: bg-indigo-600 */
             border-radius: 4px;
         }
         .operator-grid::-webkit-scrollbar-thumb:hover {
-            background: #6366f1; /* bg-indigo-500 */
+            background: #6366f1; /* Tailwind: bg-indigo-500 */
         }
-
     </style>
 </head>
 <body>
@@ -134,7 +177,7 @@
                 
                 const classHeader = document.createElement('h2');
                 classHeader.className = 'class-header';
-                classHeader.innerHTML = `<img src="./images/classes/${className}.svg" class="class-icon" alt="${className} icon" onerror="this.style.display='none'"><span>${className}</span>`;
+                classHeader.innerHTML = `<img src="./images/classes/${className}.png" class="class-icon" alt="${className} icon" onerror="this.style.display='none'"><span>${className}</span>`;
                 classSection.appendChild(classHeader);
 
                 const operatorGrid = document.createElement('div');
