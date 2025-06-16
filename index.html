@@ -15,34 +15,57 @@
             color: #d1d5db; /* text-gray-300 */
         }
         .operator-card {
-            @apply relative w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden shadow-lg cursor-pointer transition-all duration-200;
+            @apply relative flex-shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden shadow-lg cursor-pointer transition-transform duration-200;
         }
         .operator-card:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
             z-index: 10;
         }
         .operator-avatar {
-            @apply w-full h-full object-cover transition-all duration-200;
+            @apply w-full h-full object-cover;
         }
         .potential-overlay {
             @apply absolute bottom-0 right-0 px-2 py-0.5 bg-black bg-opacity-60 text-white font-bold text-sm rounded-tl-lg;
             pointer-events: none; /* Allows click to go through to the card */
         }
-        .is-max-potential .operator-avatar {
-            filter: grayscale(80%);
+        
+        /* --- MODIFIED --- */
+        /* 當潛能為6時，字體變為金色 */
+        .is-max-potential .potential-overlay {
+            @apply bg-black bg-opacity-75 text-yellow-400 font-bold;
         }
-         .is-max-potential .potential-overlay {
-            @apply bg-indigo-600 text-white;
-        }
+
         .class-header {
              @apply flex items-center gap-4 text-2xl font-bold text-indigo-400 mt-8 mb-4 border-b-2 border-gray-700 pb-2;
         }
         .class-icon {
             @apply w-8 h-8;
         }
+
+        /* --- MODIFIED --- */
+        /* 將網格改為水平滾動的 Flex 容器 */
         .operator-grid {
-            @apply flex flex-wrap gap-3;
+            @apply flex gap-4 overflow-x-auto pb-3; /* pb-3 為滾動條留出空間 */
+            flex-wrap: nowrap;
         }
+        
+        /* --- ADDED --- */
+        /* 美化 Webkit 瀏覽器 (Chrome, Safari) 的滾動條 */
+        .operator-grid::-webkit-scrollbar {
+            height: 8px;
+        }
+        .operator-grid::-webkit-scrollbar-track {
+            background: #1f2937; /* bg-gray-800 */
+            border-radius: 4px;
+        }
+        .operator-grid::-webkit-scrollbar-thumb {
+            background: #4f46e5; /* bg-indigo-600 */
+            border-radius: 4px;
+        }
+        .operator-grid::-webkit-scrollbar-thumb:hover {
+            background: #6366f1; /* bg-indigo-500 */
+        }
+
     </style>
 </head>
 <body>
@@ -53,7 +76,7 @@
             <p class="text-gray-400">點擊頭像即可更新幹員潛能。</p>
         </header>
         
-        <main id="operators-container" class="space-y-12">
+        <main id="operators-container" class="space-y-6">
             <!-- Operator class sections will be inserted here -->
         </main>
         
@@ -65,7 +88,7 @@
     <script type="module">
         const operatorClasses = {
             '先鋒': ['推進之王', '風笛', '嵯峨', '琴柳', '焰尾', '伺夜', '伊內絲', '繆爾賽思', '忍冬'],
-            '近衛': ['銀灰', '斯卡蒂', '陳', '赫拉格', '煌', '棘刺', '史爾特爾', '山', '帕拉斯', '耀騎士臨光', '艾麗妮', '百煉嘉維爾', '瑪恩納', '重岳', '仇白', '聖約送葬人', '赫德雷', '止頌', '薇薇安娜', '鐧', '左樂', '烏爾比安', '佩佩', '維娜.維多利亞', '隱德來希'],
+            '近衛': ['銀灰', '斯卡蒂', '陳', '赫拉格', '煌', '棘刺', '史爾特爾', '山', '帕拉斯', '耀騎士臨光', '艾麗妮', '百鍊嘉維爾', '瑪恩納', '重岳', '仇白', '聖約送葬人', '赫德雷', '止頌', '薇薇安娜', '鐧', '左樂', '烏爾比安', '佩佩', '維娜.維多利ଆ', '隱德來希'],
             '重裝': ['星熊', '塞雷婭', '年', '森蚺', '瑕光', '泥岩', '號角', '斥罪', '滌火潔西卡', '黍', '余', '信仰攪拌機'],
             '狙擊': ['能天使', '黑', 'W', '早露', '迷迭香', '空弦', 'Ash', '假日威龍陳', '遠牙', '菲亞梅塔', '鴻雪', '提豐', '萊伊', '維什戴爾', '娜仁圖亞', '蕾繆安'],
             '術師': ['伊芙利特', '艾雅法拉', '莫斯提馬', '刻俄柏', '夕', '異客', '卡涅利安', '澄閃', '黑鍵', '林', '霍爾海雅', '邏各斯', '妮芙', '瑪露西爾', '荒蕪拉普蘭德', '燭煌', '死芒'],
@@ -111,7 +134,7 @@
                 
                 const classHeader = document.createElement('h2');
                 classHeader.className = 'class-header';
-                classHeader.innerHTML = `<img src="./images/classes/${className}.png" class="class-icon" alt="${className} icon" onerror="this.style.display='none'"><span>${className}</span>`;
+                classHeader.innerHTML = `<img src="./images/classes/${className}.svg" class="class-icon" alt="${className} icon" onerror="this.style.display='none'"><span>${className}</span>`;
                 classSection.appendChild(classHeader);
 
                 const operatorGrid = document.createElement('div');
