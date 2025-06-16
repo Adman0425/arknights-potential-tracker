@@ -183,9 +183,7 @@
                 const operatorGrid = document.createElement('div');
                 operatorGrid.className = 'operator-grid';
 
-                const sortedOperators = [...operatorsInClass].sort((a, b) => a.localeCompare(b, 'zh-Hant'));
-                
-                sortedOperators.forEach(name => {
+                operatorsInClass.forEach(name => {
                     const potential = potentialsData[name] || 1;
                     const card = createOperatorCard(name, potential);
                     operatorGrid.appendChild(card);
