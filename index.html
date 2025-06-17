@@ -51,7 +51,7 @@
             overflow: hidden;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* Tailwind: shadow-lg */
             cursor: pointer;
-            transition: transform 0.2s ease-in-out;
+            transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out;
         }
 
         .operator-card:hover {
@@ -59,7 +59,6 @@
             z-index: 10;
         }
         
-        /* 響應式設計：在中等螢幕上放大卡片 */
         @media (min-width: 768px) {
             .operator-card {
                 width: 6rem; /* Tailwind: md:w-24 */
@@ -71,6 +70,12 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: filter 0.2s ease-in-out;
+        }
+        
+        /* --- NEW: 未持有時的灰階樣式 --- */
+        .is-not-owned .operator-avatar {
+            filter: grayscale(1);
         }
 
         .potential-overlay {
@@ -87,14 +92,12 @@
             pointer-events: none;
         }
         
-        /* 潛能為6時的特殊樣式 */
         .is-max-potential .potential-overlay {
             background-color: rgba(0, 0, 0, 0.75);
             color: #facc15; /* Tailwind: text-yellow-400 (金色) */
             font-weight: 700;
         }
 
-        /* 美化 Webkit 瀏覽器 (Chrome, Safari) 的滾動條 */
         .operator-grid::-webkit-scrollbar {
             height: 8px;
         }
@@ -118,6 +121,17 @@
             <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">明日方舟六星幹員潛能記錄器</h1>
             <p class="text-gray-400">點擊頭像即可更新幹員潛能。</p>
         </header>
+
+        <div id="stats-container" class="text-center mb-8 p-4 bg-gray-800 rounded-lg shadow-md flex justify-center gap-8">
+            <div>
+                <p class="text-gray-400 text-sm">持有率</p>
+                <p id="stats-ownership" class="text-2xl font-bold text-white">-</p>
+            </div>
+            <div>
+                <p class="text-gray-400 text-sm">總潛能數</p>
+                <p id="stats-total-potential" class="text-2xl font-bold text-white">-</p>
+            </div>
+        </div>
         
         <main id="operators-container" class="space-y-6">
             <!-- Operator class sections will be inserted here -->
@@ -144,7 +158,6 @@
         const operatorsContainer = document.getElementById('operators-container');
         const LOCAL_STORAGE_KEY = 'arknightsPotentialsData';
 
-        // 從瀏覽器本地儲存讀取資料
         function loadPotentialsFromLocal() {
             try {
                 const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -155,7 +168,6 @@
             }
         }
 
-        // 將資料儲存到瀏覽器本地儲存
         function savePotentialsToLocal() {
             try {
                 localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(potentialsData));
@@ -164,7 +176,6 @@
             }
         }
 
-        // 渲染所有幹員卡片(按職業分類)
         function renderOperators() {
             operatorsContainer.innerHTML = '';
             const classOrder = ['先鋒', '近衛', '重裝', '狙擊', '術師', '醫療', '輔助', '特種'];
@@ -174,7 +185,6 @@
                 if (!operatorsInClass || operatorsInClass.length === 0) return;
                 
                 const classSection = document.createElement('section');
-                
                 const classHeader = document.createElement('h2');
                 classHeader.className = 'class-header';
                 classHeader.innerHTML = `<img src="./images/classes/${className}.png" class="class-icon" alt="${className} icon" onerror="this.style.display='none'"><span>${className}</span>`;
@@ -184,7 +194,8 @@
                 operatorGrid.className = 'operator-grid';
 
                 operatorsInClass.forEach(name => {
-                    const potential = potentialsData[name] || 1;
+                    // --- MODIFIED: 初始潛能預設為 0 (未持有) ---
+                    const potential = potentialsData[name] || 0;
                     const card = createOperatorCard(name, potential);
                     operatorGrid.appendChild(card);
                 });
@@ -194,7 +205,6 @@
             });
         }
 
-        // 建立單一幹員卡片
         function createOperatorCard(name, potential) {
             const card = document.createElement('div');
             card.className = 'operator-card';
@@ -202,7 +212,6 @@
             card.title = name; 
 
             const avatarUrl = `./images/avatars/${name}.png`;
-            
             const avatarEl = document.createElement('img');
             avatarEl.src = avatarUrl;
             avatarEl.alt = name;
@@ -219,14 +228,17 @@
             
             function updateCardState(p) {
                 potentialOverlay.textContent = `P${p}`;
+                // --- MODIFIED: 根據潛能值切換樣式 ---
+                card.classList.toggle('is-not-owned', p === 0);
                 card.classList.toggle('is-max-potential', p === 6);
             }
 
             updateCardState(potential);
             
             card.addEventListener('click', () => {
-                let currentPotential = potentialsData[name] || 1;
-                const newPotential = (currentPotential % 6) + 1;
+                // --- MODIFIED: 循環邏輯改為 0-6 ---
+                let currentPotential = potentialsData[name] || 0;
+                const newPotential = (currentPotential + 1) % 7; // 循環 0 -> 1 -> ... -> 6 -> 0
                 updatePotential(name, newPotential);
             });
             
@@ -240,23 +252,42 @@
             return card;
         }
 
-        // 更新潛能並儲存
         function updatePotential(name, newPotential) {
-            potentialsData[name] = newPotential;
+            // --- MODIFIED: 若潛能為0，則從資料中刪除，代表未持有 ---
+            if (newPotential === 0) {
+                delete potentialsData[name];
+            } else {
+                potentialsData[name] = newPotential;
+            }
+
             const card = document.querySelector(`[data-operator="${name}"]`);
             if (card && card.updateDisplay) {
                 card.updateDisplay(newPotential);
             }
             savePotentialsToLocal();
+            updateStats();
+        }
+        
+        function updateStats() {
+            const statsOwnershipEl = document.getElementById('stats-ownership');
+            const statsTotalPotentialEl = document.getElementById('stats-total-potential');
+
+            const totalOperators = Object.values(operatorClasses).flat().length;
+            const ownedOperators = Object.keys(potentialsData).length;
+            const totalPotential = Object.values(potentialsData).reduce((sum, p) => sum + p, 0);
+
+            const ownershipRate = totalOperators > 0 ? (ownedOperators / totalOperators) * 100 : 0;
+
+            statsOwnershipEl.textContent = `${ownershipRate.toFixed(1)}% (${ownedOperators}/${totalOperators})`;
+            statsTotalPotentialEl.textContent = totalPotential;
         }
 
-        // 初始化應用程式
         function initializeApp() {
             loadPotentialsFromLocal();
             renderOperators();
+            updateStats();
         }
 
-        // 網頁載入後開始執行
         initializeApp();
     </script>
 </body>
