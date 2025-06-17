@@ -73,7 +73,7 @@
             transition: filter 0.2s ease-in-out;
         }
         
-        /* --- NEW: 未持有時的灰階樣式 --- */
+        /* 未持有時的灰階樣式 */
         .is-not-owned .operator-avatar {
             filter: grayscale(1);
         }
@@ -194,7 +194,7 @@
                 operatorGrid.className = 'operator-grid';
 
                 operatorsInClass.forEach(name => {
-                    // --- MODIFIED: 初始潛能預設為 0 (未持有) ---
+                    // 初始潛能預設為 0 (未持有)
                     const potential = potentialsData[name] || 0;
                     const card = createOperatorCard(name, potential);
                     operatorGrid.appendChild(card);
@@ -228,7 +228,7 @@
             
             function updateCardState(p) {
                 potentialOverlay.textContent = `P${p}`;
-                // --- MODIFIED: 根據潛能值切換樣式 ---
+                // 根據潛能值切換樣式
                 card.classList.toggle('is-not-owned', p === 0);
                 card.classList.toggle('is-max-potential', p === 6);
             }
@@ -236,7 +236,7 @@
             updateCardState(potential);
             
             card.addEventListener('click', () => {
-                // --- MODIFIED: 循環邏輯改為 0-6 ---
+                // 循環邏輯為 0-6
                 let currentPotential = potentialsData[name] || 0;
                 const newPotential = (currentPotential + 1) % 7; // 循環 0 -> 1 -> ... -> 6 -> 0
                 updatePotential(name, newPotential);
@@ -253,7 +253,7 @@
         }
 
         function updatePotential(name, newPotential) {
-            // --- MODIFIED: 若潛能為0，則從資料中刪除，代表未持有 ---
+            // 若潛能為0，則從資料中刪除，代表未持有
             if (newPotential === 0) {
                 delete potentialsData[name];
             } else {
