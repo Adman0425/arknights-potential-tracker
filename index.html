@@ -207,7 +207,7 @@
         };
 
         let potentialsData = {};
-        let currentServer = 'cn';
+        let currentServer = 'tw';
         const operatorsContainer = document.getElementById('operators-container');
         const POTENTIAL_STORAGE_KEY = 'arknightsPotentialsData';
         const SERVER_STORAGE_KEY = 'arknightsServerSelection';
@@ -218,8 +218,8 @@
                 const savedPotentials = localStorage.getItem(POTENTIAL_STORAGE_KEY);
                 potentialsData = savedPotentials ? JSON.parse(savedPotentials) : {};
                 const savedServer = localStorage.getItem(SERVER_STORAGE_KEY);
-                currentServer = savedServer || 'cn';
-            } catch (e) { console.error("讀取本地資料失敗:", e); potentialsData = {}; currentServer = 'cn'; }
+                currentServer = savedServer || 'tw';
+            } catch (e) { console.error("讀取本地資料失敗:", e); potentialsData = {}; currentServer = 'tw'; }
         }
 
         function saveToLocal() {
@@ -356,33 +356,52 @@
             generateImageBtn.textContent = '正在產生圖片...';
 
             const operatorClasses = serverData[currentServer];
-            // 取得當前伺服器所有幹員
-            const allOperators = Object.values(operatorClasses).flat();
+            const classOrder = ['先鋒', '近衛', '重裝', '狙擊', '術師', '醫療', '輔助', '特種'];
 
-            // 預載入所有幹員圖片
-            const loadImage = (name) => new Promise((resolve) => {
+            // 預載入所有需要的圖片
+            const allOperatorNames = Object.values(operatorClasses).flat();
+            const avatarUrls = allOperatorNames.map(name => ({ type: 'avatar', name, url: `./images/avatars/${name}.png` }));
+            const classIconUrls = classOrder.map(name => ({ type: 'class', name, url: `./images/classes/${name}.png` }));
+
+            const loadImage = ({ type, name, url }) => new Promise((resolve) => {
                 const img = new Image();
                 img.crossOrigin = 'anonymous';
-                img.onload = () => resolve({img, name});
-                img.onerror = () => resolve({img: null, name});
-                img.src = `./images/avatars/${name}.png`;
+                img.onload = () => resolve({ type, name, img });
+                img.onerror = () => resolve({ type, name, img: null }); // 圖片載入失敗也繼續
+                img.src = url;
             });
-            
-            const loadedImages = await Promise.all(allOperators.map(loadImage));
 
-            // 設定 Canvas
+            const loadedImageAssets = await Promise.all([...avatarUrls, ...classIconUrls].map(loadImage));
+            const avatars = new Map(loadedImageAssets.filter(a => a.type === 'avatar' && a.img).map(a => [a.name, a.img]));
+            const classIcons = new Map(loadedImageAssets.filter(a => a.type === 'class' && a.img).map(a => [a.name, a.img]));
+
+            // 動態計算 Canvas 尺寸
             const cardSize = 120;
-            const padding = 20;
+            const padding = 30;
             const headerHeight = 100;
             const footerHeight = 50;
-            const cols = Math.min(12, allOperators.length);
-            const rows = Math.ceil(allOperators.length / cols);
+            const classHeaderHeight = 60;
+            const classPadding = 20;
+            const cols = 12; // 每行最多顯示的幹員數量
 
+            let totalHeight = headerHeight;
+            classOrder.forEach(className => {
+                const operatorsInClass = operatorClasses[className];
+                if (operatorsInClass && operatorsInClass.length > 0) {
+                    totalHeight += classHeaderHeight;
+                    const rows = Math.ceil(operatorsInClass.length / cols);
+                    totalHeight += rows * cardSize + classPadding;
+                }
+            });
+            totalHeight += footerHeight - classPadding;
+
+            const canvasWidth = cols * cardSize + 2 * padding;
             const canvas = document.createElement('canvas');
-            canvas.width = cols * cardSize + 2 * padding;
-            canvas.height = headerHeight + rows * cardSize + footerHeight;
+            canvas.width = canvasWidth;
+            canvas.height = totalHeight;
             const ctx = canvas.getContext('2d');
 
+            // 繪製背景和標題
             ctx.fillStyle = '#111827';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -397,52 +416,73 @@
             ctx.font = '16px "Noto Sans TC"';
             ctx.fillText(`${serverText} - ${timestamp}`, canvas.width / 2, padding + 70);
 
-            // 繪製所有幹員
-            loadedImages.forEach(({img, name}, index) => {
-                if (!img) return;
+            // 按職業分組繪製幹員
+            let currentY = headerHeight;
+            classOrder.forEach(className => {
+                const operatorsInClass = operatorClasses[className];
+                if (!operatorsInClass || operatorsInClass.length === 0) return;
 
-                const potential = potentialsData[name] || 0;
-                const row = Math.floor(index / cols);
-                const col = index % cols;
-                const x = padding + col * cardSize;
-                const y = headerHeight + row * cardSize;
-
-                // 據是否持有套用灰階濾鏡
-                ctx.save(); // 儲存當前繪圖狀態
-                if (potential === 0) {
-                    ctx.filter = 'grayscale(1)';
+                // 繪製職業標題
+                ctx.fillStyle = '#818cf8';
+                ctx.font = 'bold 24px "Noto Sans TC"';
+                ctx.textAlign = 'left';
+                
+                const classIcon = classIcons.get(className);
+                if (classIcon) {
+                    ctx.drawImage(classIcon, padding, currentY + 4, 32, 32);
                 }
+                ctx.fillText(className, padding + 48, currentY + 30);
+                currentY += classHeaderHeight;
+
+                // 繪製該職業的幹員卡片
+                operatorsInClass.forEach((name, index) => {
+                    const avatar = avatars.get(name);
+                    if (!avatar) return; 
+
+                    const potential = potentialsData[name] || 0;
+                    const row = Math.floor(index / cols);
+                    const col = index % cols;
+                    const x = padding + col * cardSize;
+                    const y = currentY + row * cardSize;
+
+                    ctx.save();
+                    if (potential === 0) {
+                        ctx.filter = 'grayscale(1)';
+                    }
+                    ctx.drawImage(avatar, x, y, cardSize, cardSize);
+                    ctx.restore();
+
+                    // 繪製潛能文字
+                    const pText = `P${potential}`;
+                    ctx.font = 'bold 18px "Noto Sans TC"';
+                    const textMetrics = ctx.measureText(pText);
+                    const textWidth = textMetrics.width;
+
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                    ctx.beginPath();
+                    ctx.moveTo(x + cardSize, y + cardSize - 40);
+                    ctx.lineTo(x + cardSize, y + cardSize);
+                    ctx.lineTo(x + cardSize - textWidth - 20, y + cardSize);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    ctx.fillStyle = potential === 6 ? '#facc15' : '#FFFFFF';
+                    ctx.textAlign = 'right';
+                    ctx.fillText(pText, x + cardSize - 8, y + cardSize - 8);
+                });
                 
-                ctx.drawImage(img, x, y, cardSize, cardSize);
-                
-                ctx.restore(); // 恢復繪圖狀態 (移除濾鏡)
-
-                // 繪製潛能
-                const pText = `P${potential}`;
-                ctx.font = 'bold 18px "Noto Sans TC"';
-                const textMetrics = ctx.measureText(pText);
-                const textWidth = textMetrics.width;
-
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-                ctx.beginPath();
-                ctx.moveTo(x + cardSize, y + cardSize - 40);
-                ctx.lineTo(x + cardSize, y + cardSize);
-                ctx.lineTo(x + cardSize - textWidth - 20, y + cardSize);
-                ctx.closePath();
-                ctx.fill();
-
-                ctx.fillStyle = potential === 6 ? '#facc15' : '#FFFFFF';
-                ctx.textAlign = 'right';
-                ctx.fillText(pText, x + cardSize - 8, y + cardSize - 8);
+                const rowsForClass = Math.ceil(operatorsInClass.length / cols);
+                currentY += rowsForClass * cardSize + classPadding;
             });
 
+            // 觸發下載
             const link = document.createElement('a');
             link.download = 'Arknights_Collection.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
             
             generateImageBtn.disabled = false;
-            generateImageBtn.textContent = '產生持有狀況圖片';
+            generateImageBtn.textContent = '產生圖片';
         }
 
         function initializeApp() {
