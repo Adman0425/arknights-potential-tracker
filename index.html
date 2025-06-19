@@ -18,38 +18,38 @@
         .class-header {
             display: flex;
             align-items: center;
-            gap: 1rem; /* Tailwind: gap-4 */
-            font-size: 1.5rem; /* Tailwind: text-2xl */
+            gap: 1rem;
+            font-size: 1.5rem;
             line-height: 2rem;
-            font-weight: 700; /* Tailwind: font-bold */
-            color: #818cf8; /* Tailwind: text-indigo-400 */
-            margin-top: 2rem; /* Tailwind: mt-8 */
-            margin-bottom: 1rem; /* Tailwind: mb-4 */
-            border-bottom: 2px solid #374151; /* Tailwind: border-b-2 border-gray-700 */
-            padding-bottom: 0.5rem; /* Tailwind: pb-2 */
+            font-weight: 700;
+            color: #818cf8;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #374151;
+            padding-bottom: 0.5rem;
         }
 
         .class-icon {
-            width: 2rem; /* Tailwind: w-8 */
-            height: 2rem; /* Tailwind: h-8 */
+            width: 2rem;
+            height: 2rem;
         }
 
         .operator-grid {
             display: flex;
-            flex-wrap: nowrap; /* 確保不換行，強制橫向 */
-            gap: 1rem; /* Tailwind: gap-4 */
-            overflow-x: auto; /* 啟用水平滾動條 */
-            padding-bottom: 0.75rem; /* Tailwind: pb-3 (為滾動條留出空間) */
+            flex-wrap: nowrap;
+            gap: 1rem;
+            overflow-x: auto;
+            padding-bottom: 0.75rem;
         }
 
         .operator-card {
             position: relative;
-            flex-shrink: 0; /* 防止卡片在 flex 容器中被壓縮 */
-            width: 5rem; /* Tailwind: w-20 */
-            height: 5rem; /* Tailwind: h-20 */
-            border-radius: 0.5rem; /* Tailwind: rounded-lg */
+            flex-shrink: 0;
+            width: 5rem;
+            height: 5rem;
+            border-radius: 0.5rem;
             overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); /* Tailwind: shadow-lg */
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             cursor: pointer;
             transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out;
         }
@@ -61,8 +61,8 @@
         
         @media (min-width: 768px) {
             .operator-card {
-                width: 6rem; /* Tailwind: md:w-24 */
-                height: 6rem; /* Tailwind: md:h-24 */
+                width: 6rem;
+                height: 6rem;
             }
         }
 
@@ -73,7 +73,6 @@
             transition: filter 0.2s ease-in-out;
         }
         
-        /* 未持有時的灰階樣式 */
         .is-not-owned .operator-avatar {
             filter: grayscale(1);
         }
@@ -82,51 +81,56 @@
             position: absolute;
             bottom: 0;
             right: 0;
-            padding: 0.125rem 0.5rem; /* Tailwind: px-2 py-0.5 */
+            padding: 0.125rem 0.5rem;
             background-color: rgba(0, 0, 0, 0.6);
             color: white;
-            font-weight: 700; /* Tailwind: font-bold */
-            font-size: 0.875rem; /* Tailwind: text-sm */
+            font-weight: 700;
+            font-size: 0.875rem;
             line-height: 1.25rem;
-            border-top-left-radius: 0.5rem; /* Tailwind: rounded-tl-lg */
+            border-top-left-radius: 0.5rem;
             pointer-events: none;
         }
         
         .is-max-potential .potential-overlay {
             background-color: rgba(0, 0, 0, 0.75);
-            color: #facc15; /* Tailwind: text-yellow-400 (金色) */
+            color: #facc15; /* 金色 */
             font-weight: 700;
         }
 
-        .operator-grid::-webkit-scrollbar {
-            height: 8px;
-        }
-        .operator-grid::-webkit-scrollbar-track {
-            background: #1f2937; /* Tailwind: bg-gray-800 */
-            border-radius: 4px;
-        }
-        .operator-grid::-webkit-scrollbar-thumb {
-            background: #4f46e5; /* Tailwind: bg-indigo-600 */
-            border-radius: 4px;
-        }
-        .operator-grid::-webkit-scrollbar-thumb:hover {
-            background: #6366f1; /* Tailwind: bg-indigo-500 */
-        }
+        .operator-grid::-webkit-scrollbar { height: 8px; }
+        .operator-grid::-webkit-scrollbar-track { background: #1f2937; border-radius: 4px; }
+        .operator-grid::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 4px; }
+        .operator-grid::-webkit-scrollbar-thumb:hover { background: #6366f1; }
         
-        /* 伺服器選擇器樣式 */
         .server-selector button {
             padding: 0.5rem 1rem;
             border-radius: 0.5rem;
             font-weight: 500;
             transition: background-color 0.2s, color 0.2s;
-            background-color: #374151; /* bg-gray-700 */
-            color: #d1d5db; /* text-gray-300 */
+            background-color: #374151;
+            color: #d1d5db;
             border: 2px solid transparent;
         }
         .server-selector button.active {
-            background-color: #4f46e5; /* bg-indigo-600 */
+            background-color: #4f46e5;
             color: white;
-            border-color: #818cf8; /* border-indigo-400 */
+            border-color: #818cf8;
+        }
+        
+        #generate-image-btn {
+            background-color: #16a34a; /* bg-green-600 */
+            color: white;
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s;
+        }
+        #generate-image-btn:hover {
+            background-color: #15803d; /* bg-green-700 */
+        }
+        #generate-image-btn:disabled {
+            background-color: #4b5563; /* bg-gray-600 */
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -135,10 +139,9 @@
     <div id="app" class="container mx-auto p-4 md:p-8">
         <header class="text-center mb-4">
             <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">明日方舟六星幹員潛能記錄器</h1>
-            <p class="text-gray-400">點擊頭像即可更新幹員潛能</p>
+            <p class="text-gray-400">點擊頭像即可更新幹員潛能。</p>
         </header>
 
-        <!-- 伺服器選擇器 -->
         <div id="server-selector" class="server-selector flex justify-center gap-4 mb-8">
             <button data-server="tw">台服 (TW)</button>
             <button data-server="jp">日服/國際服 (JP/EN)</button>
@@ -155,18 +158,21 @@
                 <p id="stats-total-potential" class="text-2xl font-bold text-white">-</p>
             </div>
         </div>
+
+        <div class="text-center mb-8">
+            <button id="generate-image-btn">產生圖片</button>
+        </div>
         
         <main id="operators-container" class="space-y-6">
             <!-- Operator class sections will be inserted here -->
         </main>
         
         <footer class="text-center mt-12 text-gray-500 text-sm">
-            <p>資料將自動儲存於您的瀏覽器</p>
+            <p>資料將自動儲存於您的瀏覽器。</p>
         </footer>
     </div>
 
     <script type="module">
-        // 伺服器資料庫
         const serverData = {
             'cn': { // 中服
                 '先鋒': ['推進之王', '風笛', '嵯峨', '琴柳', '焰尾', '伺夜', '伊內絲', '繆爾賽思', '忍冬'],
@@ -178,7 +184,7 @@
                 '輔助': ['安潔莉娜', '麥哲倫', '鈴蘭', '濁心斯卡蒂', '靈知', '令', '白鐵', '淬羽赫默', '塑心', '魔王', '酒神'],
                 '特種': ['阿', '傀影', '溫蒂', '歌蕾蒂婭', '水月', '老鯉', '歸溟幽靈鯊', '多蘿西', '緘默德克薩斯', '麒麟R夜刀', '琳瑯詩懷雅', 'Ela', '阿斯卡綸', '弒君者', '引星棘刺', '新約能天使']
             },
-            'jp': { // 國際/日服
+            'jp': { // 日/國際服
                  '先鋒': ['推進之王', '風笛', '嵯峨', '琴柳', '焰尾', '伺夜', '伊內絲', '繆爾賽思', '忍冬'],
                 '近衛': ['銀灰', '斯卡蒂', '陳', '赫拉格', '煌', '棘刺', '史爾特爾', '山', '帕拉斯', '耀騎士臨光', '艾麗妮', '百煉嘉維爾', '瑪恩納', '重岳', '仇白', '聖約送葬人', '赫德雷', '止頌', '薇薇安娜', '鐧', '左樂', '烏爾比安', '佩佩', '維娜.維多利亞'],
                 '重裝': ['星熊', '塞雷婭', '年', '森蚺', '瑕光', '泥岩', '號角', '斥罪', '滌火潔西卡', '黍'],
@@ -201,31 +207,26 @@
         };
 
         let potentialsData = {};
-        let currentServer = 'tw'; // 預設伺服器
+        let currentServer = 'cn';
         const operatorsContainer = document.getElementById('operators-container');
         const POTENTIAL_STORAGE_KEY = 'arknightsPotentialsData';
         const SERVER_STORAGE_KEY = 'arknightsServerSelection';
+        const generateImageBtn = document.getElementById('generate-image-btn');
 
         function loadFromLocal() {
             try {
                 const savedPotentials = localStorage.getItem(POTENTIAL_STORAGE_KEY);
                 potentialsData = savedPotentials ? JSON.parse(savedPotentials) : {};
                 const savedServer = localStorage.getItem(SERVER_STORAGE_KEY);
-                currentServer = savedServer || 'tw';
-            } catch (e) {
-                console.error("讀取本地資料失敗:", e);
-                potentialsData = {};
-                currentServer = 'tw';
-            }
+                currentServer = savedServer || 'cn';
+            } catch (e) { console.error("讀取本地資料失敗:", e); potentialsData = {}; currentServer = 'cn'; }
         }
 
         function saveToLocal() {
             try {
                 localStorage.setItem(POTENTIAL_STORAGE_KEY, JSON.stringify(potentialsData));
                 localStorage.setItem(SERVER_STORAGE_KEY, currentServer);
-            } catch (e) {
-                console.error("儲存本地資料失敗:", e);
-            }
+            } catch (e) { console.error("儲存本地資料失敗:", e); }
         }
 
         function switchServer(server) {
@@ -338,7 +339,6 @@
 
             const totalOperators = Object.values(operatorClasses).flat().length;
             
-            // 過濾 potentialsData，只計算當前伺服器存在的幹員
             const ownedOperatorsData = Object.entries(potentialsData).filter(([opName, _]) => 
                 Object.values(operatorClasses).flat().includes(opName)
             );
@@ -351,14 +351,108 @@
             statsTotalPotentialEl.textContent = totalPotential;
         }
 
+        async function handleGenerateImage() {
+            generateImageBtn.disabled = true;
+            generateImageBtn.textContent = '正在產生圖片...';
+
+            const operatorClasses = serverData[currentServer];
+            // 取得當前伺服器所有幹員
+            const allOperators = Object.values(operatorClasses).flat();
+
+            // 預載入所有幹員圖片
+            const loadImage = (name) => new Promise((resolve) => {
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.onload = () => resolve({img, name});
+                img.onerror = () => resolve({img: null, name});
+                img.src = `./images/avatars/${name}.png`;
+            });
+            
+            const loadedImages = await Promise.all(allOperators.map(loadImage));
+
+            // 設定 Canvas
+            const cardSize = 120;
+            const padding = 20;
+            const headerHeight = 100;
+            const footerHeight = 50;
+            const cols = Math.min(12, allOperators.length);
+            const rows = Math.ceil(allOperators.length / cols);
+
+            const canvas = document.createElement('canvas');
+            canvas.width = cols * cardSize + 2 * padding;
+            canvas.height = headerHeight + rows * cardSize + footerHeight;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#111827';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 36px "Noto Sans TC"';
+            ctx.textAlign = 'center';
+            ctx.fillText('明日方舟六星幹員持有狀況', canvas.width / 2, padding + 36);
+
+            const serverText = {cn: '中服 (CN)', jp: '日服/國際服 (JP/EN)', tw: '台服 (TW)'}[currentServer];
+            const timestamp = new Date().toLocaleString('zh-TW');
+            ctx.fillStyle = '#9CA3AF';
+            ctx.font = '16px "Noto Sans TC"';
+            ctx.fillText(`${serverText} - ${timestamp}`, canvas.width / 2, padding + 70);
+
+            // 繪製所有幹員
+            loadedImages.forEach(({img, name}, index) => {
+                if (!img) return;
+
+                const potential = potentialsData[name] || 0;
+                const row = Math.floor(index / cols);
+                const col = index % cols;
+                const x = padding + col * cardSize;
+                const y = headerHeight + row * cardSize;
+
+                // 據是否持有套用灰階濾鏡
+                ctx.save(); // 儲存當前繪圖狀態
+                if (potential === 0) {
+                    ctx.filter = 'grayscale(1)';
+                }
+                
+                ctx.drawImage(img, x, y, cardSize, cardSize);
+                
+                ctx.restore(); // 恢復繪圖狀態 (移除濾鏡)
+
+                // 繪製潛能
+                const pText = `P${potential}`;
+                ctx.font = 'bold 18px "Noto Sans TC"';
+                const textMetrics = ctx.measureText(pText);
+                const textWidth = textMetrics.width;
+
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.beginPath();
+                ctx.moveTo(x + cardSize, y + cardSize - 40);
+                ctx.lineTo(x + cardSize, y + cardSize);
+                ctx.lineTo(x + cardSize - textWidth - 20, y + cardSize);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.fillStyle = potential === 6 ? '#facc15' : '#FFFFFF';
+                ctx.textAlign = 'right';
+                ctx.fillText(pText, x + cardSize - 8, y + cardSize - 8);
+            });
+
+            const link = document.createElement('a');
+            link.download = 'Arknights_Collection.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+            generateImageBtn.disabled = false;
+            generateImageBtn.textContent = '產生持有狀況圖片';
+        }
+
         function initializeApp() {
             loadFromLocal();
             
             document.querySelectorAll('#server-selector button').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    switchServer(e.target.dataset.server);
-                });
+                button.addEventListener('click', (e) => switchServer(e.target.dataset.server));
             });
+
+            generateImageBtn.addEventListener('click', handleGenerateImage);
             
             updateServerButtons();
             renderOperators();
