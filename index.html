@@ -90,10 +90,11 @@
             border-top-left-radius: 0.5rem;
             pointer-events: none;
         }
-        
+
+         // 金色
         .is-max-potential .potential-overlay {
             background-color: rgba(0, 0, 0, 0.75);
-            color: #facc15; /* 金色 */
+            color: #facc15;
             font-weight: 700;
         }
 
@@ -118,7 +119,7 @@
         }
         
         #generate-image-btn {
-            background-color: #16a34a; /* bg-green-600 */
+            background-color: #16a34a;
             color: white;
             font-weight: 700;
             padding: 0.75rem 1.5rem;
@@ -126,10 +127,10 @@
             transition: background-color 0.2s;
         }
         #generate-image-btn:hover {
-            background-color: #15803d; /* bg-green-700 */
+            background-color: #15803d;
         }
         #generate-image-btn:disabled {
-            background-color: #4b5563; /* bg-gray-600 */
+            background-color: #4b5563;
             cursor: not-allowed;
         }
     </style>
@@ -164,8 +165,7 @@
         </div>
         
         <main id="operators-container" class="space-y-6">
-            <!-- Operator class sections will be inserted here -->
-        </main>
+            </main>
         
         <footer class="text-center mt-12 text-gray-500 text-sm">
             <p>資料將自動儲存於您的瀏覽器。</p>
@@ -378,7 +378,7 @@
             // 動態計算 Canvas 尺寸
             const cardSize = 120;
             const padding = 30;
-            const headerHeight = 100;
+            const headerHeight = 180; // 增加頭部高度以容納統計數據
             const footerHeight = 50;
             const classHeaderHeight = 60;
             const classPadding = 20;
@@ -416,8 +416,39 @@
             ctx.font = '16px "Noto Sans TC"';
             ctx.fillText(`${serverText} - ${timestamp}`, canvas.width / 2, padding + 70);
 
+            // 計算並繪製統計數據 ---
+            const totalOperators = Object.values(operatorClasses).flat().length;
+            const ownedOperatorsData = Object.entries(potentialsData).filter(([opName, _]) => 
+                Object.values(operatorClasses).flat().includes(opName)
+            );
+            const ownedOperatorsCount = ownedOperatorsData.length;
+            const totalPotential = ownedOperatorsData.reduce((sum, [_, p]) => sum + p, 0);
+            const ownershipRate = totalOperators > 0 ? (ownedOperatorsCount / totalOperators) * 100 : 0;
+            const ownershipText = `${ownershipRate.toFixed(1)}% (${ownedOperatorsCount}/${totalOperators})`;
+            const totalPotentialText = `${totalPotential}`;
+
+            const statsY = padding + 105;
+            const statsGap = 250;
+
+            // 持有率
+            ctx.font = '18px "Noto Sans TC"';
+            ctx.fillStyle = '#d1d5db'; // text-gray-300
+            ctx.textAlign = 'center';
+            ctx.fillText('持有率', (canvas.width / 2) - (statsGap / 2), statsY);
+            ctx.font = 'bold 26px "Noto Sans TC"';
+            ctx.fillStyle = 'white';
+            ctx.fillText(ownershipText, (canvas.width / 2) - (statsGap / 2), statsY + 32);
+
+            // 總潛能數
+            ctx.font = '18px "Noto Sans TC"';
+            ctx.fillStyle = '#d1d5db'; // text-gray-300
+            ctx.fillText('總潛能數', (canvas.width / 2) + (statsGap / 2), statsY);
+            ctx.font = 'bold 26px "Noto Sans TC"';
+            ctx.fillStyle = 'white';
+            ctx.fillText(totalPotentialText, (canvas.width / 2) + (statsGap / 2), statsY + 32);
+
             // 按職業分組繪製幹員
-            let currentY = headerHeight;
+            let currentY = headerHeight; // 從頭部高度開始繪製
             classOrder.forEach(className => {
                 const operatorsInClass = operatorClasses[className];
                 if (!operatorsInClass || operatorsInClass.length === 0) return;
@@ -475,7 +506,7 @@
                 currentY += rowsForClass * cardSize + classPadding;
             });
 
-            // 觸發下載
+            // 下載
             const link = document.createElement('a');
             link.download = 'Arknights_Collection.png';
             link.href = canvas.toDataURL('image/png');
